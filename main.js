@@ -105,9 +105,8 @@ export function generateEmployeeData(dtoIn) {
     const maxTime = youngestBirth.getTime();
     let birthTime = minTime + Math.random() * (maxTime - minTime);
 
-    /*Aby měl každý zaměstnanec unikátní datum narození až na milisekundy,
-    posunu datum o malý počet milisekund směrem dozadu. Eliminuje duplicity.*/
-    birthTime -= (i + 1);
+    /*Unikátní datum pro každého zaměstnance. Eliminuje duplicity.*/
+    birthTime = Math.min(maxTime - 1, birthTime + i);
 
     const birthdate = new Date(birthTime).toISOString();
 
