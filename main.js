@@ -42,7 +42,7 @@ function roundTo1Decimal(value) {
 // Výpočet věku v letech jako desetinné číslo.
 function getAgeInYears(birthdateIso, now = new Date()) {
   const birth = new Date(birthdateIso);
-  const msPerYear = 365.2425 * 24 * 60 * 60 * 1000;
+  const msPerYear = 365.25 * 24 * 60 * 60 * 1000;
   return (now.getTime() - birth.getTime()) / msPerYear;
 }
 
