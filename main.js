@@ -94,18 +94,16 @@ export function generateEmployeeData(dtoIn) {
     const workload = workloads[randomInt(0, workloads.length - 1)];
 
     // Generování data narození v ISO formátu v zadaném rozsahu min - max.
-    const oldestBirth = new Date(now);
-    oldestBirth.setUTCFullYear(now.getUTCFullYear() - dtoIn.age.max);
+    const age = randomInt(dtoIn.age.min, dtoIn.age.max);
 
-    const youngestBirth = new Date(now);
-    youngestBirth.setUTCFullYear(now.getUTCFullYear() - dtoIn.age.min);
+    const birth = new Date(now);
+    birth.setUTCFullYear(now.getUTCFullYear() - age);
 
-    const minTime = oldestBirth.getTime();
-    const maxTime = youngestBirth.getTime();
+    birth.setUTCMonth(randomInt(0, 11));
+    birth.setUTCDate(randomInt(1, 28));
 
-    // Unikátní datum pro každého zaměstnance.
-    let birthTime = minTime + Math.random() * (maxTime - minTime);
-    const birthdate = new Date(birthTime).toISOString();
+    const birthdate = birth.toISOString();
+
 
 
     employees.push({
