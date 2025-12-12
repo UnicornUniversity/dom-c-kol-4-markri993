@@ -102,7 +102,6 @@ export function generateEmployeeData(dtoIn) {
 
     const minTime = oldestBirth.getTime();
     const maxTime = youngestBirth.getTime();
-    let birthTime = minTime + Math.random() * (maxTime - minTime);
 
     // Unikátní datum pro každého zaměstnance.
     let birthTime = minTime + Math.random() * (maxTime - minTime);
