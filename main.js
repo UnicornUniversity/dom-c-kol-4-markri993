@@ -93,10 +93,6 @@ export function generateEmployeeData(dtoIn) {
     // Náhodně generovaný pracovní úvazek.
     const workloads = [10, 20, 30, 40];
     const workload = workloads[randomInt(0, workloads.length - 1)];
-
-    // Generování data narození v ISO formátu v zadaném rozsahu min - max.
-    const now = new Date(); // ideálně mít před cyklem, ale může být i tady
-
     const msPerYear = 365.25 * 24 * 60 * 60 * 1000;
 
 // Stále je nutné pracovat s věkem jako s desetinným číslem (pokyny učitele).
@@ -144,8 +140,8 @@ export function getEmployeeStatistics(employees) {
   const workloads = safeEmployees.map((e) => e.workload);
 
   const averageAge = total ? roundTo1Decimal(ages.reduce((s, a) => s + a, 0) / total) : 0;
-  const minAge = total ? Math.round(Math.min(...ages)) : 0;
-  const maxAge = total ? Math.round(Math.max(...ages)) : 0;
+  const minAge = total ? Math.floor(Math.min(...ages)) : 0;
+  const maxAge = total ? Math.ceil(Math.max(...ages)) : 0;
 
   // Medián věku
   const medianAge = total ? Math.round(median(ages)) : 0;
