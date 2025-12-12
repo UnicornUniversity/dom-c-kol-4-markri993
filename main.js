@@ -70,7 +70,7 @@ export function generateEmployeeData(dtoIn) {
 
   // Základní validace vstupu
   if (!isValidDtoIn(dtoIn)) return employees;
-
+  const now = new Date();
   for (let i = 0; i < dtoIn.count; i++) {
 
     /*Pohlaví generujeme náhodně (male/female).
@@ -94,7 +94,6 @@ export function generateEmployeeData(dtoIn) {
     const workload = workloads[randomInt(0, workloads.length - 1)];
 
     // Generování data narození v ISO formátu v zadaném rozsahu min - max.
-    const now = new Date();
     const oldestBirth = new Date(now);
     oldestBirth.setUTCFullYear(now.getUTCFullYear() - dtoIn.age.max);
 
@@ -105,10 +104,10 @@ export function generateEmployeeData(dtoIn) {
     const maxTime = youngestBirth.getTime();
     let birthTime = minTime + Math.random() * (maxTime - minTime);
 
-    /*Unikátní datum pro každého zaměstnance. Eliminuje duplicity.*/
-    birthTime = Math.min(maxTime - 1, birthTime + i);
-
+    // Unikátní datum pro každého zaměstnance.
+    let birthTime = minTime + Math.random() * (maxTime - minTime);
     const birthdate = new Date(birthTime).toISOString();
+
 
     employees.push({
       gender,
@@ -140,9 +139,11 @@ export function getEmployeeStatistics(employees) {
   const averageAge = total ? roundTo1Decimal(ages.reduce((s, a) => s + a, 0) / total) : 0;
   const minAge = total ? Math.floor(Math.min(...ages)) : 0;
   const maxAge = total ? Math.floor(Math.max(...ages)) : 0;
+
+  // Medián věku
   const medianAge = total ? Math.round(median(ages)) : 0;
 
-  // Medián úvazku - spočítá výsledek na desetinné číslo
+  // Medián úvazku
   const medianWorkload = total ? Math.round(median(workloads)) : 0;
 
   const women = safeEmployees.filter((e) => e.gender === "female");
