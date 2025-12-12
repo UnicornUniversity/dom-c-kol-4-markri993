@@ -115,6 +115,7 @@ const birthdate = new Date(birthTime).toISOString();
     employees.push({
       gender,
       birthdate,
+      age,
       name,
       surname,
       workload,
@@ -136,7 +137,7 @@ export function getEmployeeStatistics(employees) {
   const workload30 = safeEmployees.filter((e) => e.workload === 30).length;
   const workload40 = safeEmployees.filter((e) => e.workload === 40).length;
 
-  const ages = safeEmployees.map((e) => getAgeInYears(e.birthdate, now));
+  const ages = safeEmployees.map((e) => e.age);
   const workloads = safeEmployees.map((e) => e.workload);
 
   const averageAge = total ? roundTo1Decimal(ages.reduce((s, a) => s + a, 0) / total) : 0;
