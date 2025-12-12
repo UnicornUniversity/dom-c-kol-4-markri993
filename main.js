@@ -119,6 +119,10 @@ const birthdate = new Date(birthTime).toISOString();
       surname,
       workload,
     };
+
+    Object.defineProperty(employee, "age", { value: age, enumerable: false });
+  employees.push(employee);
+
   }
 
   return employees;
@@ -140,11 +144,11 @@ export function getEmployeeStatistics(employees) {
   const workloads = safeEmployees.map((e) => e.workload);
 
   const averageAge = total ? roundTo1Decimal(ages.reduce((s, a) => s + a, 0) / total) : 0;
-  const minAge = total ? Math.floor(Math.min(...ages) + 1e-9) : 0;
-  const maxAge = total ? Math.floor(Math.max(...ages) + 1e-9) : 0;
+  const minAge = total ? Math.floor(Math.min(...ages)) : 0;
+  const maxAge = total ? Math.floor(Math.max(...ages)) : 0;
 
   // Medián věku
-  const medianAge = total ? Math.floor(median(ages) + 1e-9) : 0;
+  const medianAge = total ? Math.floor(median(ages)) : 0;
 
   // Medián úvazku
   const medianWorkload = total ? Math.round(median(workloads)) : 0;
