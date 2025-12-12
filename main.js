@@ -139,8 +139,8 @@ export function getEmployeeStatistics(employees) {
   const workloads = safeEmployees.map((e) => e.workload);
 
   const averageAge = total ? roundTo1Decimal(ages.reduce((s, a) => s + a, 0) / total) : 0;
-  const minAge = total ? Math.round(Math.min(...ages)) : 0;
-  const maxAge = total ? Math.round(Math.max(...ages)) : 0;
+  const minAge = total ? Math.floor(Math.min(...ages)) : 0;
+  const maxAge = total ? Math.floor(Math.max(...ages)) : 0;
   const medianAge = total ? Math.round(median(ages)) : 0;
 
   // Medián úvazku - spočítá výsledek na desetinné číslo
