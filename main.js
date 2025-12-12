@@ -64,14 +64,18 @@ function isValidDtoIn(dtoIn) {
   return true;
 }
 
-// Generování zaměstnanců jako samostatná funkce (dle zadání domácího úkolu 4)
+// Generování zaměstnanců jako samostatná funkce
 export function generateEmployeeData(dtoIn) {
   const employees = [];
 
   // Základní validace vstupu
   if (!isValidDtoIn(dtoIn)) return employees;
   const now = new Date();
-  for (let i = 0; i < dtoIn.count; i++) {
+  const used = new Set();
+  let safety = 0;
+  while (employees.length < dtoIn.count) {
+    safety++;
+    if (safety > dtoIn.count * 50) break;
 
     /*Pohlaví generujeme náhodně (male/female).
     Křestní jméno vybíráme z pole "names" podle pohlaví:
@@ -86,38 +90,37 @@ export function generateEmployeeData(dtoIn) {
       name = names[randomInt(maleNameCount, names.length - 1)];
     }
 
-    // Příjmení generujeme náhodně ze seznamu "surnames" (bez úpravy podle pohlaví).
-    const surname = surnames[randomInt(0, surnames.length - 1)];
+    // Příjmení generujeme náhodně ze seznamu "surnames".
+// Požadavek z HW3: ženy mají přechýlené příjmení (typicky + "ová").
+const baseSurname = surnames[randomInt(0, surnames.length - 1)];
+const surname = gender === "female" ? `${baseSurname}ová` : baseSurname;
 
     // Náhodně generovaný pracovní úvazek.
     const workloads = [10, 20, 30, 40];
     const workload = workloads[randomInt(0, workloads.length - 1)];
 
-    // Generování data narození v ISO formátu v zadaném rozsahu min - max.
-    const now = new Date(); // ideálně mít před cyklem, ale může být i tady
+// Generování data narození (ISO) tak, aby věk byl v rozsahu <min, max> jako desetinné číslo.
 
-    const oldestBirth = new Date(now);
-    oldestBirth.setUTCFullYear(now.getUTCFullYear() - dtoIn.age.max);
+const msPerYear = 365.25 * 24 * 60 * 60 * 1000;
 
-    const youngestBirth = new Date(now);
-    youngestBirth.setUTCFullYear(now.getUTCFullYear() - dtoIn.age.min);
+// Náhodný věk jako desetinné číslo
+const age = dtoIn.age.min + Math.random() * (dtoIn.age.max - dtoIn.age.min);
 
-    const minTime = oldestBirth.getTime() + 1; // +1 ms => zaručí age < max
-    const maxTime = youngestBirth.getTime();
-
-    const birthTime = minTime + Math.random() * (maxTime - minTime);
-    const birthdate = new Date(birthTime).toISOString();
-
-
-
-
-    employees.push({
+// Datum narození: teď minus náhodný věk
+const birthTime = now.getTime() - age * msPerYear;
+const birthdate = new Date(birthTime).toISOString();
+const employee = {
       gender,
       birthdate,
       name,
       surname,
       workload,
-    });
+    };
+
+    const key = `${employee.gender}|${employee.birthdate}|${employee.name}|${employee.surname}|${employee.workload}`;
+    if (used.has(key)) continue;
+    used.add(key);
+    employees.push(employee);
   }
 
   return employees;
@@ -139,8 +142,8 @@ export function getEmployeeStatistics(employees) {
   const workloads = safeEmployees.map((e) => e.workload);
 
   const averageAge = total ? roundTo1Decimal(ages.reduce((s, a) => s + a, 0) / total) : 0;
-  const minAge = total ? Math.floor(Math.min(...ages)) : 0;
-  const maxAge = total ? Math.floor(Math.max(...ages)) : 0;
+  const minAge = total ? Math.round(Math.min(...ages)) : 0;
+  const maxAge = total ? Math.round(Math.max(...ages)) : 0;
 
   // Medián věku
   const medianAge = total ? Math.round(median(ages)) : 0;
@@ -153,7 +156,12 @@ export function getEmployeeStatistics(employees) {
     ? roundTo1Decimal(women.reduce((s, e) => s + e.workload, 0) / women.length)
     : 0;
 
-  const sortedByWorkload = [...safeEmployees].sort((a, b) => a.workload - b.workload);
+  const sortedByWorkload = [...safeEmployees].sort((a, b) => {
+    if (a.workload !== b.workload) return a.workload - b.workload;
+    if (a.surname !== b.surname) return a.surname.localeCompare(b.surname, "cs");
+    if (a.name !== b.name) return a.name.localeCompare(b.name, "cs");
+    return a.birthdate.localeCompare(b.birthdate);
+  });
 
   return {
     total,
